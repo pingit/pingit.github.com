@@ -3,9 +3,8 @@ title: about
 layout: page
 ---
 
-a
 
-> Minimalist | Appleist | Unixer | Coder
+> Minimalist | Unixer | Vimer
 
 who involved in 
 
@@ -13,10 +12,5 @@ who involved in
 
 mail 
 
-> echo srvpqxfbyqfvpdtkbjwt | tr yxwvtsrqpkjfdb zuonmlihgeca@.
+> 794703557@qq.com
 
-or follow 
-
-> [@o_lll](https://twitter.com/#!/o_lll)
-
-to reach me
