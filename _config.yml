@@ -1,9 +1,9 @@
 #original
-markdown: rdiscount
+#markdown: rdiscount
 pygments: true
 permalink: /:year/:month/:day/:title.html
 name: try
-markdown: rdiscount
+#markdown: rdiscount
 
 #try
 #
