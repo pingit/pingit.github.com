@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="generator" content="AsciiDoc 8.6.8, bootstrap-docs backend">
-    <title>leak check</title>
+    <title>blog with asciidoc</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
 /*!
@@ -8080,7 +8080,7 @@ ol.linenums li {
     </div>
     <header class="jumbotron subhead" id="overview">
       <div class="container">
-        <h1>leak check</h1>
+        <h1>blog with asciidoc</h1>
       </div>
     </header>
     <div class="container">
@@ -8091,317 +8091,204 @@ ol.linenums li {
         </div>
         <div id="content" class="span9">
 <section id="preamble">
-<p><a href="http://www.loudounwater.org/About/highbills/">http://www.loudounwater.org/About/highbills/</a></p>
-<div class="literalblock">
-<div class="content monospaced">
-<pre>Did You Have a High Water and <small>Sewer</small> Bill?       ['su:ә] n. 下水
-
-Your water may have been running,
-<strong>unintentionally</strong>, for more than 24 hours!
-
-When our meter reading trucks are in the
-service area <strong>pulling</strong> meter readings, our      pull是个黄金词
-system will sometimes notice homes that have
-had water running for long periods of time.
-Our meter reading system will notify the
-service representative of a potential leak if
-water has been <small>flowing through</small> the water
-meter for over 24 hours. If our meter reading
-trucks receive notification of a possible
-leak, we will notify those customers through
-a note on their water and <strong>wastewater</strong> bill or
-by leaving a hanging door tag.
-
-If you have not received notification on your
-bill or a hanging doortag, but still believe
-your bill is too high, please use the
-following checklist for water usage both
-inside and outside the home:</pre>
-</div></div>
+<p>I like MD, but ASCIIDOC is my (current) favorite markup. I really need to be
+able to write my blog with asciidoc, then publish the HTML web page — these
+can/should be automated in VIM.</p>
 </section>
-<section id="inside_your_home">
+<section id="here_is_the_code">
   <div class="page-header">
-    <h1>1. Inside your Home</h1>
+    <h1>1. here is the code</h1>
   </div>
-<div class="literalblock">
-<div class="content monospaced">
-<pre>Put your hand on the side of the <small>toilet tank</small>
-If the tank is cold and <small>sweating</small> and the     [swet] 出汗, 渗出, 烦恼
-toilet has not been flushed for a while, you
-may have a leak.  Remove the <small>tank lid</small> and
-<small>squeeze</small> a few drops of food coloring into the 紧握, 挤, 榨取
-<small>back tank</small>. Wait 10 minutes; if color shows up
-in the bowl the <small>flapper</small> is leaking and needs  阻水阀,挡板
-to be replaced. You can purchase flapper kits
-at local hardware stores or call a
-professional to replace the flapper. If you
-do not have food coloring, contact us for
-<strong>toilet dye tablets</strong>.                           n. 颜料, 染料
+<pre class="prettyprint">"Asciidoc2Jekyll
 
-Check the water level in the tank by taking
-off the cover.  The level should be set so it
-is below the overflow level.  If you have to
-<small>*jiggle* the flush handle</small> on your toilet to get (使)轻摇, (使)微动
-it to stop running, the <small>flush level bar</small> and
-chain (or the handle itself) may be <small>sticking</small>.
-There are some flapper kits that also contain
-replacement flush handles and chains.
+function s:esctitle(str)
+  let str = a:str
+  let str = tolower(str)
+  let str = substitute(str, g:jekyll_title_pattern, '-', 'g')
+  let str = substitute(str, '\(--\)\+', '-', 'g')
+  let str = substitute(str, '\(^-\|-$\)', '', 'g')
+  return str
+endfunction
 
-Look for wet, <strong>warped</strong> or <strong>discolored</strong> stains on 美[wɔrp] 变形, 弯曲,
-your ceilings, floors, walls and <small>woodwork</small>     变色,木制品, 木制家具
-(such as bottom of your kitchen and bathroom
-<small>sink cabinets</small>).                               柜式洗涤槽
+"(02/20/2013) publish a asciidoc-generated html blog
+function! Asciidoc2Jekyll(leveloffset, title)
+    let os=a:leveloffset
+    let title=a:title
 
-Be sure that the pressure release valve line    活瓣, 阀, 活门
-on your water heater is not dripping.  This     滴, 滴下物, 水滴
-would be the line that is <strong>perpendicular</strong> with    [,pә:pәn'dikjulә] n. 垂直线
-the water heater and dumps water into a pan
-or <small>floor drain</small>.                               地漏；[建] 地面排水管
+    if title == ''
+      let title = input("Post title: ")
+    endif
 
-Be sure that your <strong>humidifier</strong> is set correctly
-to prevent over usage of water.  Check the
-manufacturing <small>directions</small> to see if you can
-adjust it, or a heating or cooling company may
-need to <small>make adjustments</small></pre>
-</div></div>
+    if title != ''
+        let file_name = strftime("%Y-%m-%d-") .
+           \s:esctitle(title) .
+           \"." . "html"
+
+        "exe "tabedit " . g:jekyll_path . "/_posts/" . file_name
+        let full_name = g:jekyll_path . "/_posts/" . file_name
+
+        let g:AsciidocCmd = ":0,\$w !asciidoc
+            \-a numbered -a toc2
+            \-a toclevels=4
+            \-a iconsdir=/home/ping/bin/asciidoc-8.6.8/images/icons
+            \-a icons -a data-uri -a showcomments
+            \-o " . full_name . " " . "
+            \-a leveloffset=" . os . "@" . " " . "
+            \-b bootstrap-docs - "
+
+        echo "the follow CLI will be executed\n" g:AsciidocCmd
+
+        let isSure=input("are you sure?(y/n)",'y')
+        if isSure == 'y'
+            exec g:AsciidocCmd
+        else
+            return g:AsciidocCmd
+        endif
+    endif
+endf
+
+command! -nargs=* A2J :call Asciidoc2Jekyll(&lt;f-args&gt;)
+nn &lt;expr&gt; ,aj ':' . Asciidoc2Jekyll(-1, "new_post") . repeat("\&lt;left&gt;", 24)
+
+"git
+
+"todo: need to return the cmd but "not" to excute
+function! MyGit(commitmsg)
+    let commitmsg=a:commitmsg
+    let GitCmd=":!
+        \git add -A .;
+        \git commit -m \"" .
+        \commitmsg . "\";" . "
+        \git push origin master"
+        "\repeat("\&lt;left&gt;", 30)
+    return ":" . GitCmd
+endf
+command! -nargs=* MyGit exec MyGit(&lt;q-args&gt;)
+
+"command! -nargs=* MyGit  call MyGit(&lt;q-args&gt;)
+
+"this works, but too ugly
+"nn ,gg :!git add -A .;git commit -m "msg: ";git push origin master"
+"            \&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;
+"            \&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;
+"            \&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;
+"            \&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;
+"this is much better
+nn &lt;expr&gt; ,gg ':' . MyGit("new post:") . repeat("\&lt;left&gt;", 24)</pre>
 </section>
-<section id="outside_your_home">
+<section id="how_to_use_it">
   <div class="page-header">
-    <h1>2. Outside Your Home</h1>
+    <h1>2. how to use it</h1>
   </div>
-<div class="literalblock">
-<div class="content monospaced">
-<pre>Walk around your home and check your yard to
-see if there are any <strong>saturated</strong> spots or very  ['sætʃәreitid] 饱和的, 渗透的
-green spots in your yard. These spots may
-mean a leak in the <small>irrigation line</small> or a leak
-from the meter to the house. Or the above
-ground sprinkler is watering an area for too
-long and may need a timing adjustment.
-
-Check your sprinkler system for broken heads
-or broken pipes.  Check your outside <strong>hose bibs</strong>  软管龙头
-to see if they are dripping. If so the
-valve may not be holding.                       活瓣, 阀, 活门
-
-We can help you determine whether or not you
-have a leak, and we may be able to help you
-locate the leak, by scheduling a leak check
-appointment. To schedule a leak check
-appointment, please call Customer Service at
-571.291.7880.</pre>
-</div></div>
-</section>
-<section id="keyword_to_learn">
-  <div class="page-header">
-    <h1>3. keyword to learn</h1>
-  </div>
-<p>drip
-valve
-drain
-adjustment/adjust
-saturated
-unintentionally
-== E*TRADE
-Mon Nov 26 14:30:34 EST 2012</p>
-<p>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
-<p>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-E*TRADE®
-Important Information
-November 26, 2012</p>
-<p>Dear Ping Song,
-RE: Account ending in 7469</p>
-<p>E*TRADE Securities LLC ("E*TRADE") is pleased to announce that the current
-program for uninvested cash in your brokerage account, the E*TRADE Financial
-Extended Insurance Sweep Deposit Account ("ESDA"), is being replaced by the JP
-Morgan Liquid Assets Money Market Fund E*TRADE Class, ticker symbol JLEXX ("JPM
-MMF" or the "Fund"). This change is being made pursuant to Section 4(i) of the
-E*TRADE Brokerage Customer Agreement.</p>
-<p>No action is required on your part for this change.</p>
-<p>On or around January 2, 2013, any cash balances in your ESDA will be
-automatically transferred to purchase shares of the JPM MMF. There will be no
-change in access to funds in your E*TRADE account — you can continue to add
-funds, write checks or use your ATM/Debit Card as you do today.</p>
-<p>The JPM MMF is a money market mutual fund that makes investments in securities
-and other assets. Its investment objective is to seek current income with
-liquidity and stability of principal by investing in high-quality, short-term
-money market instruments. The 7-day yield for the Fund as of market close on
-11/9/12 was 0.05%¹. The ESDA currently pays interest at a rate of 0.01%.</p>
-<p>The JPM MMF is protected up to $500,000 by the Securities Investor Protection
-Corporation ("SIPC"). To learn more about SIPC protection, please visit
-www.sipc.org for more information. The ESDA is a deposit account with five
-program banks, including our affiliates, providing insurance by the Federal
-Deposit Insurance Corporation ("FDIC") for up to $1,250,000. To learn more
-about FDIC insurance, please visit www.fdic.gov.</p>
-<p>Investments in JPM MMF are not deposits or obligations of, or guaranteed or
-endorsed by, any bank and _   are not insured or guaranteed by the FDIC or any
-other government agency. Although the Fund seeks to   _ preserve the value of
-your investment at $1.00 per share, it is possible to lose money by investing
-in the Fund. Please review the enclosed summary prospectus for further
-information about the Fund&#8217;s performance, investment objectives, risks, charges
-and expenses. The full prospectus for the Fund and the Statement of Additional
-Information can be found online at www.etrade.com/prospectus and can also be
-provided free of charge by calling 1-800-387-2331. The information in the
-prospectus should be considered carefully before making your decision.</p>
-<p>There will be no cost to you and E*TRADE will comply with U.S. Securities and
-Exchange Commission Regulation S-P (Privacy of Consumer Financial Information)
-in connection with the change.</p>
-<p>For more information, please review the following enclosed documents:</p>
 <ul>
 <li>
-Frequently Asked Questions – this document (shown below) details the change
-  that will be happening within your account as well as additional information
-  about the Fund.
+generate html with asciidoc, save it the jekyll folder: <code>,aj</code>
 </li>
 <li>
-Summary Prospectus for the JPM MMF.
+list current blogs, check the new blog: <code>,js</code>
+</li>
+<li>
+use git to publish it: <code>,gg</code>
 </li>
 </ul>
-<p>If you do not select a different option before January 2, 2013, the program for
-uninvested cash in your brokerage account will be changed to the JPM MMF.
-However, you may elect to change this option at any time in the future with no
-cost, subject to the availability of alternative programs at that time (please
-visit www.etrade.com/sweepoptions for all the options that may be available to
-you). If you have any questions about this change or you wish to remain in the
-ESDA, please call us at 1-800-ETRADE-1 (1-800-387-2331) from 7 a.m. until
-midnight ET, any day of the week.</p>
-<p>Thank you and we look forward to continuing to serve you for all your investing
-needs.</p>
-<p>Sincerely,</p>
-<p>Michael J. Curcio
-CEO, E*TRADE Securities LLC
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
-<p>1 The Fund&#8217;s investment adviser, administrator, and distributor have
-contractually agreed to waive certain fees and/or reimburse certain expenses
-under certain circumstances until 7/1/13, at which time these service providers
-will determine whether or not to renew or revise the waiver. As of 11/9/12, the
-7-day yield without the expense waivers was -0.76%.</p>
-<p>The E*TRADE Financial Extended Insurance Sweep Deposit Account ("ESDA") Being
-Replaced by the JP Morgan Liquid Assets Money Market Fund E*TRADE Class ("JPM
-MMF" or the "Fund")</p>
-<p>Frequently Asked Questions</p>
-<p>What are cash programs and sweep options?</p>
-<p>E*TRADE Securities ("E*TRADE") makes available to its customers a number of
-programs designed to handle uninvested cash in their brokerage accounts.
-Uninvested cash may exist in an account for any number of reasons, including
-receipt of dividends on a security or proceeds from the sale of a security.
-Some of these cash programs have a sweep feature, which automatically transfers
-("sweeps") the uninvested cash into a program such as the ESDA or the JPM MMF
-(ticker symbol JLEXX). Please see the enclosed chart showing all the options
-that may be available to you.</p>
-<p>What sweep option is being offered to me now?</p>
-<p>You are being offered the JPM MMF, a money market mutual fund that seeks
-current income with liquidity and stability of principal by investing in
-high-quality, short-term money market instruments. You should carefully
-consider the investment objectives, risks, charges and expenses of the Fund in
-the enclosed Summary Prospectus before making your decision. The full
-prospectus and the Statement of Additional Information are available at
-www.etrade.com/prospectus and can also be provided at no cost by calling
-1-800-387-2331.</p>
-<p>When will this change occur?</p>
-<p>Your sweep option will be changed to the JPM MMF on or around January 2, 2013.</p>
-<p>What are the main differences between the ESDA and JPM MMF?</p>
-<p>The ESDA is a bank deposit account insured by FDIC for up to $1.25 million (to
-learn more about FDIC insurance, please visit www.fdic.gov) whereas the JPM MMF
-is a money market mutual fund protected by SIPC for up to $500,000 (to learn
-more about SIPC protection, please visit www.sipc.org). The 7-day yield for the
-Fund as of market close on 11/9/12 was 0.05% compared to the interest rate of
-0.01% for the ESDA. The Fund&#8217;s investment adviser, administrator, and
-distributor have contractually agreed to waive certain fees and/or reimburse
-certain expenses under certain circumstances until 7/1/13, at which time these
-service providers will determine whether or not to renew or revise the waiver.
-As of 11/9/12, the 7-day yield without the expense waivers was -0.76%. Although
-the Fund is not affiliated with E*TRADE or its affiliates, the Fund pays
-affiliates of E*TRADE for the sale of Fund shares and related services.</p>
-<p>How does the sweep into the JPM MMF work?</p>
-<p>Any uninvested cash in your brokerage account will be automatically transferred
-to buy shares of the JPM MMF, which will be shown on your account statement
-with a cash value associated with it. The JPM MMF will accrue dividends nightly
-that will be reinvested monthly in Fund shares. Your brokerage statement will
-reflect the JPM MMF account balances and all transaction activities (deposits
-and withdrawals) for the statement period.</p>
-<p>When cash is needed in your brokerage account (such as to purchase a security,
-pay fees, cover checks you have written on your brokerage account, or if you
-wish to withdraw money from your brokerage account), the amount will be
-transferred automatically from your JPM MMF account back to your brokerage
-account.</p>
-<p>Can I still write checks and use my ATM/VISA® Debit Card on my brokerage account?</p>
-<p>Yes. You will continue to enjoy all the cash management features of your
-brokerage account as you do with the ESDA. If you currently have check-writing
-and/or ATM/VISA® Debit Card privileges for your brokerage account, you can
-continue to use them. Available funds will be automatically transferred from
-your JPM MMF account to your brokerage account to cover any transactions you
-make.</p>
-<p>Is there a limit on the number of transfers between my JPM MMF account and my
-E*TRADE Securities account?</p>
-<p>No. An unlimited number of automatic sweep transfers are permitted.
-_                                                                                                          _
-How can I check my JPM MMF balance?</p>
-<p>You may view your balance online any time by logging into your account. In
-addition, your account statement will show the JPM MMF period-end balance.</p>
-<p>Who can I contact if I have more questions?</p>
-<p>If you have any questions about how the sweep program works, the JPM MMF, or if
-you wish to remain in the ESDA, you may contact us at 1-800-387-2331 between 7
-a.m. and midnight ET, any day of the week.</p>
-<p>Options for Your Uninvested Cash</p>
-<p>┌────────────┬─────────────────────┬─────────────────────┬─────────────────────┬─────────────────────┐
-│            │   JPMorgan Liquid   │                     │                     │                     │
-│            │       Assets        │                     │ JPMorgan California │  JPMorgan New York  │
-│  Account   │    E*TRADE Class    │ JPMorgan Municipal  │   Municipal Money   │   Municipal Money   │
-│  Features  │  Money Market Fund  │  Money Market Fund  │     Market Fund     │     Market Fund     │
-├────────────┼─────────────────────┼─────────────────────┼─────────────────────┼─────────────────────┤
-│ SIPC       │SIPC Protection up to│SIPC Protection up to│SIPC Protection up to│SIPC Protection up to│
-│ Protection │     $500,000<sup>8      │     $500,000</sup>8      │     $500,000<sup>8      │     $500,000</sup>8      │
-├────────────┼─────────────────────┼─────────────────────┼─────────────────────┼─────────────────────┤
-│ Account    │                     │                     │                     │                     │
-│ Records    │ Paper or Electronic │ Paper or Electronic │ Paper or Electronic │ Paper or Electronic │
-│ Delivery   │                     │                     │                     │                     │
-│ Option(s)  │                     │                     │                     │                     │
-└────────────┴─────────────────────┴─────────────────────┴─────────────────────┴─────────────────────┘</p>
-<p>┌───────────┬───────────────┬────────────────────────────┬─────────────┬─────────────┬───────────────┐
-│           │               │                            │             │International│               │
-│           │   Extended    │                            │             │    Sweep    │               │
-│           │   Insurance   │     Extended Insurance     │             │   Deposit   │               │
-│  Account  │ Sweep Deposit │      Retirement Sweep      │             │   Account   │ Cash Balance  │
-│ Features  │Account (ESDA) │   Deposit Account (ERDA)   │  SweepMax   │   (ISDA)¹   │ Program (CBP) │
-├───────────┼───────────────┼────────────────────────────┼─────────────┼─────────────┼───────────────┤
-│           │FDIC-insured up│FDIC-insured up to $500,000 │FDIC-insured │FDIC-insured │SIPC Protection│
-│ Insurance │to $1,250,000² │   (less for some account   │    up to    │    up to    │up to $250,000^│
-│           │               │          types)³           │  $250,000   │  $250,000   │       8       │
-├───────────┼───────────────┼────────────────────────────┼─────────────┼─────────────┼───────────────┤
-│ Account   │               │                            │             │             │               │
-│ Records   │   Paper or    │    Paper or Electronic     │ Electronic  │  Paper or   │   Paper or    │
-│ Delivery  │  Electronic   │                            │    Only     │ Electronic  │  Electronic   │
-│ Option(s) │               │                            │             │             │               │
-└───────────┴───────────────┴────────────────────────────┴─────────────┴─────────────┴───────────────┘</p>
-<p>1 The ISDA is available only to customers who neither live in the United States
-nor have a U.S. Social Security number or taxpayer identification number.</p>
-<p>2 Each depositor insured to at least $250,000 by the FDIC. The E*TRADE
-Financial Extended Insurance Sweep Deposit Account ("ESDA") is a cash sweep
-option for E*TRADE Securities brokerage accounts. When the ESDA is designated
-as the sweep option for your brokerage account, available cash balances in your
-brokerage account is automatically deposited in bank accounts at up to five
-depository institutions (each a "Program Bank"), with deposits at each Program
-Bank insured by the FDIC for up to $250,000, resulting in total FDIC insurance
-coverage for cash in a your ESDA account of up to $1,250,000. Any amount in
-excess of $1,250,000 will not be covered by FDIC insurance. You also should
-include other accounts you hold in the same title and capacity at any of the
-Program Banks in calculating FDIC insurance coverage limits, because coverage
-limits are set per customer across all accounts.</p>
-<p>3 Under the ERDA program, up to the first $250,000 of available cash balances
-from your brokerage retirement account is deposited into your ERDA at E*TRADE
-Bank, up to the next $250,000 into a similar ERDA at E*TRADE Savings Bank, and
-amounts over $500,000 into your ERDA at E*TRADE Bank.</p>
-<p>8 E*TRADE Securities LLC, Member of SIPC, which protects securities of its
-members up to $500,000 (including $250,000 for claims for cash). Explanatory
-brochure available upon request or at www.sipc.org. SIPC coverage is not the
-same as the insurance on bank accounts provided by the Federal Deposit
-Insurance Corporation (FDIC). It does not protect investors against a decline
-in the market value of securities. SIPC generally protects customers against
-the physical loss of securities if the broker/dealer holding the securities for
-the customer fails.</p>
-<p>For more details regarding these options, please visit:
-www.etrade.com/sweepoptions</p>
+</section>
+<section id="source_code_of_this_blog">
+  <div class="page-header">
+    <h1>3. source code of this blog</h1>
+  </div>
+<pre class="prettyprint">    == blog with asciidoc
+
+    I like MD, but ASCIIDOC is my (current) favorite markup. I really need to be
+    able to write my blog with asciidoc, then publish the HTML web page — these
+    can/should be automated in VIM.
+
+    === here is the code
+
+    ----
+    "Asciidoc2Jekyll
+
+    function s:esctitle(str)
+      let str = a:str
+      let str = tolower(str)
+      let str = substitute(str, g:jekyll_title_pattern, '-', 'g')
+      let str = substitute(str, '\(--\)\+', '-', 'g')
+      let str = substitute(str, '\(^-\|-$\)', '', 'g')
+      return str
+    endfunction
+
+    "(02/20/2013) publish a asciidoc-generated html blog
+    function! Asciidoc2Jekyll(leveloffset, title)
+        let os=a:leveloffset
+        let title=a:title
+
+        if title == ''
+          let title = input("Post title: ")
+        endif
+
+        if title != ''
+            let file_name = strftime("%Y-%m-%d-") .
+               \s:esctitle(title) .
+               \"." . "html"
+
+            "exe "tabedit " . g:jekyll_path . "/_posts/" . file_name
+            let full_name = g:jekyll_path . "/_posts/" . file_name
+
+            let g:AsciidocCmd = ":0,\$w !asciidoc
+                \-a numbered -a toc2
+                \-a toclevels=4
+                \-a iconsdir=/home/ping/bin/asciidoc-8.6.8/images/icons
+                \-a icons -a data-uri -a showcomments
+                \-o " . full_name . " " . "
+                \-a leveloffset=" . os . "@" . " " . "
+                \-b bootstrap-docs - "
+
+            echo "the follow CLI will be executed\n" g:AsciidocCmd
+
+            let isSure=input("are you sure?(y/n)",'y')
+            if isSure == 'y'
+                exec g:AsciidocCmd
+            else
+                return g:AsciidocCmd
+            endif
+        endif
+    endf
+
+    command! -nargs=* A2J :call Asciidoc2Jekyll(&lt;f-args&gt;)
+    nn &lt;expr&gt; ,aj ':' . Asciidoc2Jekyll(-1, "new_post") . repeat("\&lt;left&gt;", 24)
+
+    "git
+
+    "todo: need to return the cmd but "not" to excute
+    function! MyGit(commitmsg)
+        let commitmsg=a:commitmsg
+        let GitCmd=":!
+            \git add -A .;
+            \git commit -m \"" .
+            \commitmsg . "\";" . "
+            \git push origin master"
+            "\repeat("\&lt;left&gt;", 30)
+        return ":" . GitCmd
+    endf
+    command! -nargs=* MyGit exec MyGit(&lt;q-args&gt;)
+
+    "command! -nargs=* MyGit  call MyGit(&lt;q-args&gt;)
+
+    "this works, but too ugly
+    "nn ,gg :!git add -A .;git commit -m "msg: ";git push origin master"
+    "            \&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;
+    "            \&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;
+    "            \&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;
+    "            \&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;&lt;left&gt;
+    "this is much better
+    nn &lt;expr&gt; ,gg ':' . MyGit("new post:") . repeat("\&lt;left&gt;", 24)
+
+    ----
+
+    === how to use it
+
+    * generate html with asciidoc, save it the jekyll folder: `,aj`
+    * list current blogs, check the new blog: `,js`
+    * use git to publish it: `,gg`</pre>
 </section>
         </div>
       </div>
