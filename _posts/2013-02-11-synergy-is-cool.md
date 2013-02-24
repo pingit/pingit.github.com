@@ -4,6 +4,7 @@ title: "synergy is cool!"
 description: ""
 category: 
 tags: [synergy]
+guid: urn:uuid:85554b63-e9f0-4454-8ca7-fbcf272a2fad
 
 ---
 {% include JB/setup %}
