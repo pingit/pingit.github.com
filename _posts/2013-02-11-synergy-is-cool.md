@@ -4,7 +4,7 @@ title: "synergy is cool!"
 description: ""
 category: 
 tags: [synergy]
-comments: true
+
 ---
 {% include JB/setup %}
 
