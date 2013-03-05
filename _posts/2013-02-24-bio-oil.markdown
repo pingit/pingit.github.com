@@ -1,0 +1,9 @@
+---
+layout: post
+title: "bio-oil"
+published: true
+tags: life
+---
+
+
+![](/images/bio-oil.jpg "bio-oil")  

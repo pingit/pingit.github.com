@@ -17,7 +17,7 @@ to invoke the new server. Under Unix the common technique is to create a new
 process using the fork function.  Lightweight processes (threads) can also be
 used, if supported.
 
-A concurrent server invokes a new process to handle each client, so the
+A [[concurrent]] server invokes a new process to handle each client, so the
 listening server should always be ready to handle the next incoming connection
 request. That's the underlying reason for using concurrent servers. But there
 is still a chance that multiple connection requests arrive while the listening

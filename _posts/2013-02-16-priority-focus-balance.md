@@ -2,7 +2,7 @@
 layout: post
 title: "priority,focus,balance"
 description: "some thought"
-category: 
+category: life
 tags: life
 ---
 {% include JB/setup %}

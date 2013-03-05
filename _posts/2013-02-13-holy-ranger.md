@@ -2,7 +2,7 @@
 layout: post
 title: "ranger - a FM that a CLIer must have!"
 description: ""
-categories: 
+categories: tech
 tags: [ranger]
 ---
 {% include JB/setup %}

@@ -2,6 +2,7 @@
 layout: post
 title: "my PC doesn't support USB3.0"
 published: true
+tags: linux
 ---
 
 so my PC doesn't support USB3
