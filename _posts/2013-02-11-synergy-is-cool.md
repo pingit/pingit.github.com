@@ -1,4 +1,4 @@
----
+[[---]]
 layout: post
 title: "synergy is cool!"
 description: ""
